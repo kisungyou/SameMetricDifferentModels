@@ -1,0 +1,116 @@
+{
+  "description": "Frozen matched MAP comparison; not original-paper replication",
+  "frozen_utc": "2026-10-23T02:37:10.629846+00:00",
+  "source_citation": "Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2026). Voteview: Congressional Roll-Call Votes Database. https://voteview.com/",
+  "source_documentation": [
+    "https://voteview.com/data",
+    "https://voteview.com/articles/data_help_votes"
+  ],
+  "sources": {
+    "S114_votes.csv": {
+      "url": "https://voteview.com/static/data/out/votes/S114_votes.csv",
+      "sha256": "cf8fb57d99ecc32dc0a35ddb62fc578926479a80092e72ca70caad8e2fe435b1"
+    },
+    "S114_members.csv": {
+      "url": "https://voteview.com/static/data/out/members/S114_members.csv",
+      "sha256": "aa575f1930125b3ca0e5e7bd068d09005a6895722631fcae1d69a562da2a100e"
+    },
+    "S114_rollcalls.csv": {
+      "url": "https://voteview.com/static/data/out/rollcalls/S114_rollcalls.csv",
+      "sha256": "ef06eccacacf21aede6f91bdb5eb81d4426645fbb2aecb7e0bb760b17dd1c1c2"
+    }
+  },
+  "congress": 114,
+  "chamber": "Senate",
+  "original_members": 100,
+  "original_rollcalls": 502,
+  "n_members": 96,
+  "n_rollcalls": 373,
+  "n_observed": 35182,
+  "n_missing": 626,
+  "n_train": 28164,
+  "n_test": 7018,
+  "test_fraction_of_observed": 0.19947700528679438,
+  "date_min": "2015-01-08",
+  "date_max": "2016-12-10",
+  "party_counts": {
+    "200": 51,
+    "100": 44,
+    "328": 1
+  },
+  "preprocessing": {
+    "cast_code_1": 1,
+    "cast_code_6": 0,
+    "other_cast_codes": "excluded, not imputed as Nay",
+    "president_records": "excluded by chamber == Senate",
+    "member_min_participation_all_rolls": 0.8,
+    "roll_min_participation_retained_members": 0.8,
+    "roll_min_training_votes": 50,
+    "roll_min_training_minority_share": 0.1,
+    "roll_filter_outcomes": "training outcomes only; held-out Yea/Nay unused",
+    "external_ideal_points_or_probabilities": "never used",
+    "party_labels": "display and orientation only; not used in estimation"
+  },
+  "split": {
+    "seed": 20261023,
+    "test_probability": 0.2,
+    "rule": "independent uniform draw on sorted member-by-roll grid before training-only roll filtering"
+  },
+  "model": {
+    "log_odds": "a_i + b_j - gamma * ||z_i - w_j||_2 ** q",
+    "q": [
+      1,
+      2
+    ],
+    "K": 2,
+    "gamma_fixed": 1.0,
+    "intercept_prior": {
+      "distribution": "independent Normal",
+      "mean": 0,
+      "sd": 3.0
+    },
+    "coordinate_prior": {
+      "distribution": "independent Normal coordinates",
+      "mean": 0,
+      "sd": 1.0
+    },
+    "objective": "sum_train(log(1+exp(eta_ij))-y_ij*eta_ij) + sum(a_i^2+b_j^2)/(2*3^2) + sum(||z_i||^2+||w_j||^2)/2",
+    "prior_warning": "Identical parameter priors do not induce identical probability priors across q.",
+    "q1_numerics": "exact Euclidean norm; no smoothing; zero vector chosen as subgradient at exact coincidence"
+  },
+  "optimization_plan": {
+    "method": "L-BFGS-B",
+    "starts": 8,
+    "seeds": [
+      104729,
+      130363,
+      155921,
+      181081,
+      206369,
+      231779,
+      257053,
+      282407
+    ],
+    "maxiter": 2500,
+    "gtol": 1e-05,
+    "ftol": 1e-11,
+    "selection": "lowest training penalized negative log likelihood only",
+    "initialization": "start 0 training-residual SVD, start 1 perturbed SVD, remaining starts independent Gaussian coordinates; shared seed and coordinates across q"
+  },
+  "primary_metrics": [
+    "held-out mean negative log likelihood",
+    "held-out Brier score"
+  ],
+  "interpretation": "One data set and one common split; descriptive comparison only, no significance or general superiority claim.",
+  "split_sha256": "bd20e470af1a160e1120c84d827fabeafcc90812d601adabc88e624a2f275889",
+  "sensitivity_plan": {
+    "coordinate_sd": [
+      0.5,
+      1.0,
+      2.0
+    ],
+    "starts_at_each_other_sd": "selected s=1 fit plus shared random-coordinate start 2",
+    "selection": "lowest training penalized objective at each scale; all three scales reported; no holdout-based selection",
+    "freeze_note": "Added before running any model fit; processed data and mask unchanged."
+  }
+}

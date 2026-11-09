@@ -1,0 +1,35 @@
+{
+  "manuscript_title": "Same Metric, Different Models: Interpreting Political Positions",
+  "packaged_date": "2026-11-07",
+  "reference_run": "Verified macOS rerun used for current manuscript figures and Table S1",
+  "reference_completed_utc": "2026-10-23T03:43:37.536537+00:00",
+  "source_code_sha256": {
+    "verify_results.py": "2e8913990a0f149f47fd49c4e77fb0df517f0a8cc3d5840e7d2cd5daa05b969f",
+    "reproduce.py": "9a60d3901a953a45c82ddf6d2973f0659ec1fc02c8938b62c00f01bd6575a4f3",
+    "audit_map.py": "00e0c2a6ef4acd00395e487a3b830d9b3d69e4fd3d3b5d518a46c5aed1e58138",
+    "plot_senate_main.py": "9043a61692e53a8c4f7bc10dc3eb8e781a277ce318d7e7abcc4ce7857bc2fbdf",
+    "fit_comparison.py": "e8a2903da917ddb71125c6251f248755abd9d0766f1278752e3f1ced0f9b6502",
+    "figure_style.py": "bb631d43ca07d0179227decc89c54510d51a910eff13be596132522ebea38778"
+  },
+  "manuscript_source_sha256": {
+    "draft-main/letter-revised.tex": "e5726760450aec2b056fc8c4c56334fec397b2c3d2e193ca2c9daefe4248f55b",
+    "draft-supplementary/technical_appendix-revised.tex": "15a2567134783f0dde47960776556d058998189fd158c8e341a3d8fbff722259"
+  },
+  "adaptation": "Standalone Python package and narrative notebooks; original statistical routines retained. Portable Matplotlib rendering replaces TeX and platform-specific fonts.",
+  "style_reference": {
+    "url": "https://github.com/kisungyou/SphericalHuberLaw",
+    "inspected_tree": "acde8e3c1e7847fd42ed6b6d7009d766f5c1f38a"
+  },
+  "data_design": "data/fit_comparison_design.json",
+  "data_citation": "Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2026). Voteview: Congressional Roll-Call Votes Database. https://voteview.com/",
+  "original_environment": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:33:40) [Clang 22.1.3 ]",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "blas_threads": 1
+  },
+  "input_paths": "Paths in archived metadata refer to the original project layout; equivalent files are bundled in data/ and reference/. Code uses only this public folder.",
+  "archive_status": "Local replication package; no repository publication or persistent identifier assigned."
+}

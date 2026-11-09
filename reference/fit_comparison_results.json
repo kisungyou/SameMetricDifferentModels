@@ -1,0 +1,1069 @@
+{
+  "design": {
+    "description": "Frozen matched MAP comparison; not original-paper replication",
+    "frozen_utc": "2026-10-23T02:37:10.629846+00:00",
+    "source_citation": "Lewis, Jeffrey B., Keith Poole, Howard Rosenthal, Adam Boche, Aaron Rudkin, and Luke Sonnet (2026). Voteview: Congressional Roll-Call Votes Database. https://voteview.com/",
+    "source_documentation": [
+      "https://voteview.com/data",
+      "https://voteview.com/articles/data_help_votes"
+    ],
+    "sources": {
+      "S114_votes.csv": {
+        "url": "https://voteview.com/static/data/out/votes/S114_votes.csv",
+        "sha256": "cf8fb57d99ecc32dc0a35ddb62fc578926479a80092e72ca70caad8e2fe435b1"
+      },
+      "S114_members.csv": {
+        "url": "https://voteview.com/static/data/out/members/S114_members.csv",
+        "sha256": "aa575f1930125b3ca0e5e7bd068d09005a6895722631fcae1d69a562da2a100e"
+      },
+      "S114_rollcalls.csv": {
+        "url": "https://voteview.com/static/data/out/rollcalls/S114_rollcalls.csv",
+        "sha256": "ef06eccacacf21aede6f91bdb5eb81d4426645fbb2aecb7e0bb760b17dd1c1c2"
+      }
+    },
+    "congress": 114,
+    "chamber": "Senate",
+    "original_members": 100,
+    "original_rollcalls": 502,
+    "n_members": 96,
+    "n_rollcalls": 373,
+    "n_observed": 35182,
+    "n_missing": 626,
+    "n_train": 28164,
+    "n_test": 7018,
+    "test_fraction_of_observed": 0.19947700528679438,
+    "date_min": "2015-01-08",
+    "date_max": "2016-12-10",
+    "party_counts": {
+      "200": 51,
+      "100": 44,
+      "328": 1
+    },
+    "preprocessing": {
+      "cast_code_1": 1,
+      "cast_code_6": 0,
+      "other_cast_codes": "excluded, not imputed as Nay",
+      "president_records": "excluded by chamber == Senate",
+      "member_min_participation_all_rolls": 0.8,
+      "roll_min_participation_retained_members": 0.8,
+      "roll_min_training_votes": 50,
+      "roll_min_training_minority_share": 0.1,
+      "roll_filter_outcomes": "training outcomes only; held-out Yea/Nay unused",
+      "external_ideal_points_or_probabilities": "never used",
+      "party_labels": "display and orientation only; not used in estimation"
+    },
+    "split": {
+      "seed": 20261023,
+      "test_probability": 0.2,
+      "rule": "independent uniform draw on sorted member-by-roll grid before training-only roll filtering"
+    },
+    "model": {
+      "log_odds": "a_i + b_j - gamma * ||z_i - w_j||_2 ** q",
+      "q": [
+        1,
+        2
+      ],
+      "K": 2,
+      "gamma_fixed": 1.0,
+      "intercept_prior": {
+        "distribution": "independent Normal",
+        "mean": 0,
+        "sd": 3.0
+      },
+      "coordinate_prior": {
+        "distribution": "independent Normal coordinates",
+        "mean": 0,
+        "sd": 1.0
+      },
+      "objective": "sum_train(log(1+exp(eta_ij))-y_ij*eta_ij) + sum(a_i^2+b_j^2)/(2*3^2) + sum(||z_i||^2+||w_j||^2)/2",
+      "prior_warning": "Identical parameter priors do not induce identical probability priors across q.",
+      "q1_numerics": "exact Euclidean norm; no smoothing; zero vector chosen as subgradient at exact coincidence"
+    },
+    "optimization_plan": {
+      "method": "L-BFGS-B",
+      "starts": 8,
+      "seeds": [
+        104729,
+        130363,
+        155921,
+        181081,
+        206369,
+        231779,
+        257053,
+        282407
+      ],
+      "maxiter": 2500,
+      "gtol": 1e-05,
+      "ftol": 1e-11,
+      "selection": "lowest training penalized negative log likelihood only",
+      "initialization": "start 0 training-residual SVD, start 1 perturbed SVD, remaining starts independent Gaussian coordinates; shared seed and coordinates across q"
+    },
+    "primary_metrics": [
+      "held-out mean negative log likelihood",
+      "held-out Brier score"
+    ],
+    "interpretation": "One data set and one common split; descriptive comparison only, no significance or general superiority claim.",
+    "split_sha256": "bd20e470af1a160e1120c84d827fabeafcc90812d601adabc88e624a2f275889",
+    "sensitivity_plan": {
+      "coordinate_sd": [
+        0.5,
+        1.0,
+        2.0
+      ],
+      "starts_at_each_other_sd": "selected s=1 fit plus shared random-coordinate start 2",
+      "selection": "lowest training penalized objective at each scale; all three scales reported; no holdout-based selection",
+      "freeze_note": "Added before running any model fit; processed data and mask unchanged."
+    }
+  },
+  "completed_utc": "2026-10-23T03:43:37.536537+00:00",
+  "runtime": {
+    "python": "3.12.13 (main, Apr 14 2026, 14:33:40) [Clang 22.1.3 ]",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "blas_threads": 1
+  },
+  "models": {
+    "2": {
+      "selected_start": {
+        "q": 2,
+        "coordinate_sd": 1.0,
+        "start_id": 3,
+        "seed": 181081,
+        "objective": 5411.56867404279,
+        "success": true,
+        "status": 0,
+        "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+        "iterations": 413,
+        "function_evaluations": 418,
+        "max_abs_gradient": 0.004439298203276376,
+        "gradient_l2_norm": 0.008544543569131754,
+        "seconds": 0.7631490000057966,
+        "gradient_check_max_relative_error": null
+      },
+      "training": {
+        "n": 28164,
+        "negative_log_likelihood": 0.1669613257850232,
+        "brier": 0.05080260985917015,
+        "accuracy": 0.9297329924726602
+      },
+      "held_out": {
+        "n": 7018,
+        "negative_log_likelihood": 0.2033531055978822,
+        "brier": 0.06248853328402487,
+        "accuracy": 0.9103733257338273
+      },
+      "min_cross_mode_distance": 0.010711157717953092,
+      "n_distances_below_1e_minus8": 0,
+      "coordinate_rms": 1.0380782222030616,
+      "interpretation": "best objective among finite starts; no guarantee of global optimum"
+    },
+    "1": {
+      "selected_start": {
+        "q": 1,
+        "coordinate_sd": 1.0,
+        "start_id": "refine_0",
+        "seed": null,
+        "initialization": "selected fit",
+        "objective": 8078.732805919572,
+        "success": true,
+        "status": 0,
+        "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+        "iterations": 278,
+        "function_evaluations": 344,
+        "max_abs_gradient": 2.909668522098538,
+        "gradient_l2_norm": 10.303177872066513,
+        "seconds": 0.6903258750680834,
+        "maxiter": 10000,
+        "ftol": 1e-12,
+        "maxcor": 30
+      },
+      "training": {
+        "n": 28164,
+        "negative_log_likelihood": 0.2329362130609051,
+        "brier": 0.06580866880110205,
+        "accuracy": 0.9113762249680443
+      },
+      "held_out": {
+        "n": 7018,
+        "negative_log_likelihood": 0.2509250989275248,
+        "brier": 0.07252005194644119,
+        "accuracy": 0.9009689370190938
+      },
+      "min_cross_mode_distance": 3.0877299202945123e-10,
+      "n_distances_below_1e_minus8": 589,
+      "coordinate_rms": 1.7603057680980336,
+      "interpretation": "best observed training objective; no global or nonsmooth stationarity guarantee"
+    }
+  },
+  "sensitivity": {
+    "1.0": {
+      "2": {
+        "selected_start": {
+          "q": 2,
+          "coordinate_sd": 1.0,
+          "start_id": 3,
+          "seed": 181081,
+          "objective": 5411.56867404279,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 413,
+          "function_evaluations": 418,
+          "max_abs_gradient": 0.004439298203276376,
+          "gradient_l2_norm": 0.008544543569131754,
+          "seconds": 0.7631490000057966,
+          "gradient_check_max_relative_error": null
+        },
+        "training": {
+          "n": 28164,
+          "negative_log_likelihood": 0.1669613257850232,
+          "brier": 0.05080260985917015,
+          "accuracy": 0.9297329924726602
+        },
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.2033531055978822,
+          "brier": 0.06248853328402487,
+          "accuracy": 0.9103733257338273
+        },
+        "min_cross_mode_distance": 0.010711157717953092,
+        "n_distances_below_1e_minus8": 0,
+        "coordinate_rms": 1.0380782222030616,
+        "interpretation": "best objective among finite starts; no guarantee of global optimum"
+      },
+      "1": {
+        "selected_start": {
+          "q": 1,
+          "coordinate_sd": 1.0,
+          "start_id": "refine_0",
+          "seed": null,
+          "initialization": "selected fit",
+          "objective": 8078.732805919572,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 278,
+          "function_evaluations": 344,
+          "max_abs_gradient": 2.909668522098538,
+          "gradient_l2_norm": 10.303177872066513,
+          "seconds": 0.6903258750680834,
+          "maxiter": 10000,
+          "ftol": 1e-12,
+          "maxcor": 30
+        },
+        "training": {
+          "n": 28164,
+          "negative_log_likelihood": 0.2329362130609051,
+          "brier": 0.06580866880110205,
+          "accuracy": 0.9113762249680443
+        },
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.2509250989275248,
+          "brier": 0.07252005194644119,
+          "accuracy": 0.9009689370190938
+        },
+        "min_cross_mode_distance": 3.0877299202945123e-10,
+        "n_distances_below_1e_minus8": 589,
+        "coordinate_rms": 1.7603057680980336,
+        "interpretation": "best observed training objective; no global or nonsmooth stationarity guarantee"
+      }
+    },
+    "0.5": {
+      "2": {
+        "selected_start": {
+          "q": 2,
+          "coordinate_sd": 0.5,
+          "start_id": 1,
+          "seed": 155921,
+          "initialization": "shared random start 2",
+          "objective": 6661.975251730164,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 312,
+          "function_evaluations": 323,
+          "max_abs_gradient": 0.001746761366959504,
+          "gradient_l2_norm": 0.004773648382867895,
+          "seconds": 0.5865715829422697
+        },
+        "training": {
+          "n": 28164,
+          "negative_log_likelihood": 0.180556878236348,
+          "brier": 0.05340163316200149,
+          "accuracy": 0.9263953983809118
+        },
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.2080560430698603,
+          "brier": 0.06311812430859456,
+          "accuracy": 0.9103733257338273
+        }
+      },
+      "1": {
+        "selected_start": {
+          "q": 1,
+          "coordinate_sd": 0.5,
+          "start_id": "refine_1",
+          "seed": 40539,
+          "initialization": "selected fit plus coordinate Normal(mean=0, sd=1e-4; variance=1e-8) perturbation",
+          "objective": 10607.568079062532,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 5525,
+          "function_evaluations": 5626,
+          "max_abs_gradient": 14.152545138526564,
+          "gradient_l2_norm": 68.24138993413447,
+          "seconds": 11.395348875084892,
+          "maxiter": 10000,
+          "ftol": 1e-12,
+          "maxcor": 30
+        },
+        "training": {
+          "n": 28164,
+          "negative_log_likelihood": 0.2974243361534613,
+          "brier": 0.08151920270021579,
+          "accuracy": 0.9027836954977986
+        },
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.31043771616890375,
+          "brier": 0.086802368882708,
+          "accuracy": 0.8915645483043603
+        }
+      }
+    },
+    "2.0": {
+      "2": {
+        "selected_start": {
+          "q": 2,
+          "coordinate_sd": 2.0,
+          "start_id": 0,
+          "seed": null,
+          "initialization": "baseline MAP",
+          "objective": 4992.9802378218,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 341,
+          "function_evaluations": 354,
+          "max_abs_gradient": 0.001037600736186417,
+          "gradient_l2_norm": 0.002815640135181495,
+          "seconds": 0.639817374991253
+        },
+        "training": {
+          "n": 28164,
+          "negative_log_likelihood": 0.16327265479974956,
+          "brier": 0.05007196488322657,
+          "accuracy": 0.9306206504757847
+        },
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.20444904097458347,
+          "brier": 0.06260566417791495,
+          "accuracy": 0.9100883442576233
+        }
+      },
+      "1": {
+        "selected_start": {
+          "q": 1,
+          "coordinate_sd": 2.0,
+          "start_id": 0,
+          "seed": null,
+          "initialization": "baseline MAP",
+          "objective": 6499.263965301599,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 136,
+          "function_evaluations": 176,
+          "max_abs_gradient": 0.022602616569294298,
+          "gradient_l2_norm": 0.03266585068914498,
+          "seconds": 0.35259120794944465
+        },
+        "training": {
+          "n": 28164,
+          "negative_log_likelihood": 0.19581024662376817,
+          "brier": 0.05731330594636016,
+          "accuracy": 0.9216020451640392
+        },
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.22343228222053105,
+          "brier": 0.06651142683458978,
+          "accuracy": 0.908805927614705
+        }
+      }
+    }
+  },
+  "all_starts": [
+    {
+      "q": 2,
+      "coordinate_sd": 1.0,
+      "start_id": 0,
+      "seed": 104729,
+      "objective": 5411.568675580598,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 358,
+      "function_evaluations": 370,
+      "max_abs_gradient": 0.006102992852760503,
+      "gradient_l2_norm": 0.012596546197813053,
+      "seconds": 0.6695117080816999,
+      "gradient_check_max_relative_error": 3.4968811735147654e-08
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 1.0,
+      "start_id": 1,
+      "seed": 130363,
+      "objective": 5411.568674392616,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 371,
+      "function_evaluations": 379,
+      "max_abs_gradient": 0.0007413685524282343,
+      "gradient_l2_norm": 0.0029128753896975534,
+      "seconds": 0.715995957958512,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 1.0,
+      "start_id": 2,
+      "seed": 155921,
+      "objective": 5411.568674334137,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 400,
+      "function_evaluations": 416,
+      "max_abs_gradient": 0.0010871852638967283,
+      "gradient_l2_norm": 0.003359376152892928,
+      "seconds": 0.7780501670204103,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 1.0,
+      "start_id": 3,
+      "seed": 181081,
+      "objective": 5411.56867404279,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 413,
+      "function_evaluations": 418,
+      "max_abs_gradient": 0.004439298203276376,
+      "gradient_l2_norm": 0.008544543569131754,
+      "seconds": 0.7631490000057966,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 1.0,
+      "start_id": 4,
+      "seed": 206369,
+      "objective": 5411.568674968887,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 383,
+      "function_evaluations": 397,
+      "max_abs_gradient": 0.003231293582514061,
+      "gradient_l2_norm": 0.009692901957168362,
+      "seconds": 0.7317595829954371,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 1.0,
+      "start_id": 5,
+      "seed": 231779,
+      "objective": 5411.568674578589,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 360,
+      "function_evaluations": 371,
+      "max_abs_gradient": 0.0010572427054498235,
+      "gradient_l2_norm": 0.0033027505408047453,
+      "seconds": 0.6738086249679327,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 1.0,
+      "start_id": 6,
+      "seed": 257053,
+      "objective": 5411.568674276071,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 399,
+      "function_evaluations": 411,
+      "max_abs_gradient": 0.0017015634561088344,
+      "gradient_l2_norm": 0.003355544393498107,
+      "seconds": 0.7484497909899801,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 1.0,
+      "start_id": 7,
+      "seed": 282407,
+      "objective": 5411.568676970242,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 381,
+      "function_evaluations": 391,
+      "max_abs_gradient": 0.007332979927826333,
+      "gradient_l2_norm": 0.015876462198736584,
+      "seconds": 0.7091451659798622,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": 0,
+      "seed": 104729,
+      "objective": 8078.745975262029,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 2380,
+      "function_evaluations": 2452,
+      "max_abs_gradient": 2.0762213689060856,
+      "gradient_l2_norm": 7.021550823830391,
+      "seconds": 5.101019875030033,
+      "gradient_check_max_relative_error": 1.1198529891229436e-07
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": 1,
+      "seed": 130363,
+      "objective": 8078.785911662442,
+      "success": false,
+      "status": 1,
+      "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 2500,
+      "function_evaluations": 2520,
+      "max_abs_gradient": 2.449083904099734,
+      "gradient_l2_norm": 7.020275567297973,
+      "seconds": 5.269124750047922,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": 2,
+      "seed": 155921,
+      "objective": 8079.443069256284,
+      "success": false,
+      "status": 1,
+      "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 2500,
+      "function_evaluations": 2603,
+      "max_abs_gradient": 1.891938751279774,
+      "gradient_l2_norm": 6.005974056812337,
+      "seconds": 5.29297333303839,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": 3,
+      "seed": 181081,
+      "objective": 8078.733110196348,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 2468,
+      "function_evaluations": 2612,
+      "max_abs_gradient": 3.068128886473536,
+      "gradient_l2_norm": 7.446357344230841,
+      "seconds": 5.318858291953802,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": 4,
+      "seed": 206369,
+      "objective": 8089.527637621323,
+      "success": false,
+      "status": 1,
+      "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 2500,
+      "function_evaluations": 2559,
+      "max_abs_gradient": 4.945157272263222,
+      "gradient_l2_norm": 13.456540663772062,
+      "seconds": 5.227468249970116,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": 5,
+      "seed": 231779,
+      "objective": 8091.965973891419,
+      "success": false,
+      "status": 1,
+      "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 2500,
+      "function_evaluations": 2559,
+      "max_abs_gradient": 2.537880756930894,
+      "gradient_l2_norm": 8.849804296997549,
+      "seconds": 5.123048249981366,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": 6,
+      "seed": 257053,
+      "objective": 8092.069029624357,
+      "success": false,
+      "status": 1,
+      "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 2500,
+      "function_evaluations": 2527,
+      "max_abs_gradient": 1.8275826943832159,
+      "gradient_l2_norm": 8.475075310417894,
+      "seconds": 5.06602499994915,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": 7,
+      "seed": 282407,
+      "objective": 8089.2304187681875,
+      "success": false,
+      "status": 1,
+      "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 2500,
+      "function_evaluations": 2539,
+      "max_abs_gradient": 2.399768970079415,
+      "gradient_l2_norm": 9.605999525688338,
+      "seconds": 5.010676666046493,
+      "gradient_check_max_relative_error": null
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 0.5,
+      "start_id": 0,
+      "seed": null,
+      "initialization": "baseline MAP",
+      "objective": 6661.975251915423,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 224,
+      "function_evaluations": 233,
+      "max_abs_gradient": 0.001121860638093608,
+      "gradient_l2_norm": 0.004090620411238049,
+      "seconds": 0.4239152080845088
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 0.5,
+      "start_id": 1,
+      "seed": 155921,
+      "initialization": "shared random start 2",
+      "objective": 6661.975251730164,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 312,
+      "function_evaluations": 323,
+      "max_abs_gradient": 0.001746761366959504,
+      "gradient_l2_norm": 0.004773648382867895,
+      "seconds": 0.5865715829422697
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 0.5,
+      "start_id": 0,
+      "seed": null,
+      "initialization": "baseline MAP",
+      "objective": 10607.587412719939,
+      "success": false,
+      "status": 1,
+      "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 2500,
+      "function_evaluations": 2519,
+      "max_abs_gradient": 15.751250019370925,
+      "gradient_l2_norm": 59.230758878770224,
+      "seconds": 4.977322667022236
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 0.5,
+      "start_id": 1,
+      "seed": 155921,
+      "initialization": "shared random start 2",
+      "objective": 10610.222627729288,
+      "success": false,
+      "status": 1,
+      "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 2500,
+      "function_evaluations": 2530,
+      "max_abs_gradient": 13.42988816494286,
+      "gradient_l2_norm": 63.19386177055298,
+      "seconds": 4.980563583085313
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 2.0,
+      "start_id": 0,
+      "seed": null,
+      "initialization": "baseline MAP",
+      "objective": 4992.9802378218,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 341,
+      "function_evaluations": 354,
+      "max_abs_gradient": 0.001037600736186417,
+      "gradient_l2_norm": 0.002815640135181495,
+      "seconds": 0.639817374991253
+    },
+    {
+      "q": 2,
+      "coordinate_sd": 2.0,
+      "start_id": 1,
+      "seed": 155921,
+      "initialization": "shared random start 2",
+      "objective": 4992.980238168846,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 549,
+      "function_evaluations": 567,
+      "max_abs_gradient": 0.001014019041247205,
+      "gradient_l2_norm": 0.003257939231309707,
+      "seconds": 1.023630957934074
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 2.0,
+      "start_id": 0,
+      "seed": null,
+      "initialization": "baseline MAP",
+      "objective": 6499.263965301599,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 136,
+      "function_evaluations": 176,
+      "max_abs_gradient": 0.022602616569294298,
+      "gradient_l2_norm": 0.03266585068914498,
+      "seconds": 0.35259120794944465
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 2.0,
+      "start_id": 1,
+      "seed": 155921,
+      "initialization": "shared random start 2",
+      "objective": 6573.079389340092,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 269,
+      "function_evaluations": 302,
+      "max_abs_gradient": 0.3428395957074256,
+      "gradient_l2_norm": 0.5918068232508069,
+      "seconds": 0.6022586249746382
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 0.5,
+      "start_id": "refine_0",
+      "seed": null,
+      "initialization": "selected fit",
+      "objective": 10607.571788202804,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 3388,
+      "function_evaluations": 3464,
+      "max_abs_gradient": 16.85742557804692,
+      "gradient_l2_norm": 77.0564958357987,
+      "seconds": 7.172994542052038,
+      "maxiter": 10000,
+      "ftol": 1e-12,
+      "maxcor": 30
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 0.5,
+      "start_id": "refine_1",
+      "seed": 40539,
+      "initialization": "selected fit plus coordinate Normal(mean=0, sd=1e-4; variance=1e-8) perturbation",
+      "objective": 10607.568079062532,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 5525,
+      "function_evaluations": 5626,
+      "max_abs_gradient": 14.152545138526564,
+      "gradient_l2_norm": 68.24138993413447,
+      "seconds": 11.395348875084892,
+      "maxiter": 10000,
+      "ftol": 1e-12,
+      "maxcor": 30
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": "refine_0",
+      "seed": null,
+      "initialization": "selected fit",
+      "objective": 8078.732805919572,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 278,
+      "function_evaluations": 344,
+      "max_abs_gradient": 2.909668522098538,
+      "gradient_l2_norm": 10.303177872066513,
+      "seconds": 0.6903258750680834,
+      "maxiter": 10000,
+      "ftol": 1e-12,
+      "maxcor": 30
+    },
+    {
+      "q": 1,
+      "coordinate_sd": 1.0,
+      "start_id": "refine_1",
+      "seed": 41039,
+      "initialization": "selected fit plus coordinate Normal(mean=0, sd=1e-4; variance=1e-8) perturbation",
+      "objective": 8078.7328895340615,
+      "success": true,
+      "status": 0,
+      "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+      "iterations": 274,
+      "function_evaluations": 395,
+      "max_abs_gradient": 2.6748882279450177,
+      "gradient_l2_norm": 9.130908313003742,
+      "seconds": 0.7795883329818025,
+      "maxiter": 10000,
+      "ftol": 1e-12,
+      "maxcor": 30
+    }
+  ],
+  "held_out_probability_difference_q1_minus_q2": {
+    "mean_absolute": 0.07591413745601164,
+    "rms": 0.10711887399865269,
+    "max_absolute": 0.8944693673274358
+  },
+  "interpretation_limits": [
+    "Matched MAP fits of likelihood forms, not replications of the original Bayesian analyses.",
+    "Common parameter priors need not give common induced probability priors.",
+    "One Congress and one random split do not establish performance dominance.",
+    "Finite-start local optimization does not establish global MAP optimality.",
+    "Plotted units are fixed by gamma and coordinate priors, not validated cardinal ideology."
+  ],
+  "focused_refinements": [
+    {
+      "coordinate_sd": 0.5,
+      "before": {
+        "objective": 10607.587412719939,
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.31044649478917374,
+          "brier": 0.08680548312501352,
+          "accuracy": 0.8915645483043603
+        },
+        "selected_start": {
+          "q": 1,
+          "coordinate_sd": 0.5,
+          "start_id": 0,
+          "seed": null,
+          "initialization": "baseline MAP",
+          "objective": 10607.587412719939,
+          "success": false,
+          "status": 1,
+          "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+          "iterations": 2500,
+          "function_evaluations": 2519,
+          "max_abs_gradient": 15.751250019370925,
+          "gradient_l2_norm": 59.230758878770224,
+          "seconds": 4.977322667022236
+        }
+      },
+      "after": {
+        "objective": 10607.568079062532,
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.31043771616890375,
+          "brier": 0.086802368882708,
+          "accuracy": 0.8915645483043603
+        },
+        "selected_start": {
+          "q": 1,
+          "coordinate_sd": 0.5,
+          "start_id": "refine_1",
+          "seed": 40539,
+          "initialization": "selected fit plus coordinate Normal(mean=0, sd=1e-4; variance=1e-8) perturbation",
+          "objective": 10607.568079062532,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 5525,
+          "function_evaluations": 5626,
+          "max_abs_gradient": 14.152545138526564,
+          "gradient_l2_norm": 68.24138993413447,
+          "seconds": 11.395348875084892,
+          "maxiter": 10000,
+          "ftol": 1e-12,
+          "maxcor": 30
+        }
+      },
+      "objective_change": -0.019333657406605198,
+      "objective_change_per_training_vote": -6.864670290656582e-07,
+      "held_out_probability_mean_abs_change": 5.8474610980219396e-05,
+      "held_out_probability_max_abs_change": 0.0010965852629442052,
+      "held_out_log_loss_change": -8.778620269989101e-06,
+      "interpretation": "stability check only; does not establish exact/global MAP or a nonsmooth stationarity certificate"
+    },
+    {
+      "coordinate_sd": 1.0,
+      "before": {
+        "objective": 8078.733110196348,
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.25092496730949787,
+          "brier": 0.072520001044781,
+          "accuracy": 0.9009689370190938
+        },
+        "selected_start": {
+          "q": 1,
+          "coordinate_sd": 1.0,
+          "start_id": 3,
+          "seed": 181081,
+          "objective": 8078.733110196348,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 2468,
+          "function_evaluations": 2612,
+          "max_abs_gradient": 3.068128886473536,
+          "gradient_l2_norm": 7.446357344230841,
+          "seconds": 5.318858291953802,
+          "gradient_check_max_relative_error": null
+        }
+      },
+      "after": {
+        "objective": 8078.732805919572,
+        "held_out": {
+          "n": 7018,
+          "negative_log_likelihood": 0.2509250989275248,
+          "brier": 0.07252005194644119,
+          "accuracy": 0.9009689370190938
+        },
+        "selected_start": {
+          "q": 1,
+          "coordinate_sd": 1.0,
+          "start_id": "refine_0",
+          "seed": null,
+          "initialization": "selected fit",
+          "objective": 8078.732805919572,
+          "success": true,
+          "status": 0,
+          "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "iterations": 278,
+          "function_evaluations": 344,
+          "max_abs_gradient": 2.909668522098538,
+          "gradient_l2_norm": 10.303177872066513,
+          "seconds": 0.6903258750680834,
+          "maxiter": 10000,
+          "ftol": 1e-12,
+          "maxcor": 30
+        }
+      },
+      "objective_change": -0.0003042767766601173,
+      "objective_change_per_training_vote": -1.0803748638691853e-08,
+      "held_out_probability_mean_abs_change": 3.1128665628896467e-06,
+      "held_out_probability_max_abs_change": 5.0058629853577674e-05,
+      "held_out_log_loss_change": 1.3161802692174263e-07,
+      "interpretation": "stability check only; does not establish exact/global MAP or a nonsmooth stationarity certificate"
+    }
+  ],
+  "optimization_caution": "Exact q=1 norm creates near-coincident configurations. L-BFGS stopping flags and selected gradient norms are reported verbatim; small objective/prediction changes on continuation are numerical stability evidence, not a proof of stationarity or global MAP optimality.",
+  "figure_alignment": {
+    "method": "joint orthogonal Procrustes to q=1; common rotations/reflections only; no translation or rescaling",
+    "source_fit_file": "results/fit_comparison_results.npz",
+    "source_fit_sha256": "8dcff9a5fdfa9aff06bc2fa33c070e40aa27e3d5197425f62c3d94b9225ba2bc",
+    "source_parameter_keys": {
+      "1": "q1_x",
+      "2": "q2_x"
+    },
+    "coordinate_sd": 1.0,
+    "estimator": "positions from approximate joint MAP fits selected by the training posterior objective",
+    "q1_rotation": [
+      [
+        0.9998574426347222,
+        0.01688473890686859
+      ],
+      [
+        0.01688473890686859,
+        -0.9998574426347222
+      ]
+    ],
+    "q2_rotation": [
+      [
+        0.7758681781041756,
+        -0.6308950548271138
+      ],
+      [
+        0.6308950548271137,
+        0.7758681781041759
+      ]
+    ],
+    "q1_original_centroid": [
+      2.611006038040731e-05,
+      -7.157345865978413e-05
+    ],
+    "q2_original_centroid": [
+      -5.327572292817857e-08,
+      1.4604055616725307e-07
+    ],
+    "translation_applied": [
+      0.0,
+      0.0
+    ],
+    "max_pairwise_distance_change": {
+      "1": 2.6645352591003757e-15,
+      "2": 1.7763568394002505e-15
+    },
+    "posterior_invariance": {
+      "1": {
+        "orthogonality_error": 1.1102230246251565e-16,
+        "max_logit_change": 2.6645352591003757e-15,
+        "coordinate_prior_penalty_change": 0.0,
+        "intercept_prior_penalty_change": 0.0,
+        "negative_log_posterior_change": 1.8189894035458565e-12
+      },
+      "2": {
+        "orthogonality_error": 4.440892098500626e-16,
+        "max_logit_change": 1.4210854715202004e-14,
+        "coordinate_prior_penalty_change": -1.1368683772161603e-13,
+        "intercept_prior_penalty_change": 0.0,
+        "negative_log_posterior_change": 0.0
+      }
+    },
+    "displayed_positions_file": "results/figure2_positions.npz",
+    "displayed_positions_sha256": "0b091d580ef6868c88cfd93950e4987ddbb40dcd9e020892003c78a006c17618",
+    "display_party_sign": "Republican mean on right of Democratic mean in q=1 reference only"
+  }
+}
