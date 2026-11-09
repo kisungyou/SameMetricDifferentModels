@@ -1,6 +1,6 @@
 # Same Metric, Different Models: Interpreting Political Positions
 
-This repository contains reusable codes and Jupyter notebooks for the manuscript's exact example and 114th U.S. Senate illustration. Start with [Notebook 1](notebooks/1_reproduce_manuscript.ipynb) to verify the saved results and regenerate Figures 1–2, Figure S1, and Table S1. No data download or LaTeX installation is needed.
+This repository contains reusable codes and Jupyter notebooks for the manuscript's exact example and 114th U.S. Senate illustration. Start with [Notebook 1](notebooks/1_reproduce_manuscript.ipynb) to verify the saved results and regenerate Figures 1–2, Figure S1, and Table S1. No data download or LaTeX installation is needed. Each notebook is shipped with saved figures and tables visible on opening, and rerunning its cells will create those outputs again.
 
 ## Setup
 
@@ -13,8 +13,6 @@ python -m pip install -r requirements.txt
 python -m jupyter lab
 ```
 
-On Windows, activate with `.venv\Scripts\activate`. Open a notebook, select this environment as its kernel, and run its cells in order. Each notebook runs independently.
-
 ## Notebooks
 
 | Notebook | Purpose |
@@ -23,7 +21,7 @@ On Windows, activate with `.venv\Scripts\activate`. Open a notebook, select this
 | [2 — Model and data](notebooks/2_model_and_data.ipynb) | Explain the models, rebuild the frozen data split, and verify the exact construction. |
 | [3 — Refit the Senate](notebooks/3_refit_senate.ipynb) | Estimate both models at all three coordinate-prior scales and compare with the archived results. |
 
-Notebook 3 defaults to `MODE = "smoke"`, a short execution check using fewer starts and a 30-iteration cap. Set `MODE = "full"` in its configuration cell to reproduce the complete fitting procedure. Smoke estimates are not the manuscript results. A full run took approximately 82 seconds in the verification environment; runtime varies by machine.
+Notebook 3 defaults to `MODE = "full"` and includes saved outputs from the complete fitting procedure. For a short execution check, set `MODE = "smoke"` in its configuration cell; this uses fewer starts and a 30-iteration cap. Smoke estimates are not the manuscript results. A full run took approximately 82 seconds in the verification environment; runtime varies by machine.
 
 Each `Run All` creates a new output directory. To repeat the fitting cell alone, first rerun the configuration cell. New results go into `outputs/`, which is created automatically; the bundled data and reference fits are preserved.
 
