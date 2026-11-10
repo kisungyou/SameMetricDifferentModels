@@ -232,7 +232,7 @@ def draw_supplement(aligned, losses, party, n, table):
 
 
 def render_all(results_dir, data_dir, output_dir):
-    """Verify fitted inputs and export Figures 1, 2, S1 and Table S1.
+    """Verify fitted inputs and export Figures 1–2, Table S1, and an extended comparison.
 
     Returns {figure_name: {'png': Path, 'pdf': Path}}. The reference inputs
     are never written; all exports are confined to the requested output folder.

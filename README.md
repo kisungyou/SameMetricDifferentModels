@@ -1,6 +1,6 @@
-# Same Metric, Different Models: Interpreting Political Positions
+# Same Metric, Different Models: Interpreting Political Distances
 
-This repository contains reusable codes and Jupyter notebooks for the manuscript's exact example and 114th U.S. Senate illustration. Start with [Notebook 1](notebooks/1_reproduce_manuscript.ipynb) to verify the saved results and regenerate Figures 1–2, Figure S1, and Table S1. No data download or LaTeX installation is needed. Each notebook is shipped with saved figures and tables visible on opening, and rerunning its cells will create those outputs again.
+This repository contains reusable codes and Jupyter notebooks for the manuscript's exact example and 114th U.S. Senate illustration. Start with [Notebook 1](notebooks/1_reproduce_manuscript.ipynb) to verify the saved results and regenerate Figures 1–2 and Table S1, along with an extended comparison plot. No data download or LaTeX installation is needed. Each notebook is shipped with saved figures and tables visible on opening, and rerunning its cells will create those outputs again.
 
 ## Setup
 
